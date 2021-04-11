@@ -1,3 +1,3 @@
 module.exports = {
-  joinMeHandler: require('./joinme.handler'),
+  ...require('./joinme.handler'),
 };
