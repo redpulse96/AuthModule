@@ -1,8 +1,8 @@
 const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
+const JoinMeStrategy = require('passport-local').Strategy;
 
 passport.use(
-  new LocalStrategy((username, password, done) => {
+  new JoinMeStrategy((username, password, done) => {
     // The Custom user level strategy goes here
     console.log(username, password);
     done(null, username);

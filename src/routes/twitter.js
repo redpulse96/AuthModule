@@ -3,7 +3,7 @@ const passport = require('passport');
 const router = Router();
 
 router.get(
-  '/login/twitter',
+  '/auth/twitter',
   passport.authenticate('twitter', {
     session: true,
     authInfo: true,
