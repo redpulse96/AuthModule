@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const passport = require('passport');
+const { fetchCalenderDetails } = require('../handlers');
 const router = Router();
 
 router.get('/auth/google', passport.authenticate('google', { scope: ['profile'] }));
@@ -12,5 +13,7 @@ router.get(
     res.redirect('/');
   },
 );
+
+router.get('/google/calender/fetch', fetchCalenderDetails);
 
 module.exports = router;
