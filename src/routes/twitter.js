@@ -22,7 +22,7 @@ router.get(
 router.get('/oauth/callback', (req, res) => {
   let redirectUrl;
   for (const key in storedCookiesToRedirectionUrl) {
-    if (req.sessionStore.sessions[key]) {
+    if (req.sessionStore && req.sessionStore.sessions && req.sessionStore.sessions[key]) {
       redirectUrl = storedCookiesToRedirectionUrl[key];
     }
   }
