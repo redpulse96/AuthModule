@@ -7,10 +7,15 @@ const dotenv = require('dotenv');
 dotenv.config({ path: '.env' });
 
 const routes = require('./src/routes');
-require('./src/services');
 // Create a new Express application.
 const app = express();
 
+// Initialize Passport and restore authentication state, if any, from the
+// session.
+app.use(passport.initialize());
+app.use(passport.session());
+
+require('./src/services');
 // Configure view engine to render EJS templates.
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
@@ -27,11 +32,6 @@ app.use(
     saveUninitialized: true,
   }),
 );
-
-// Initialize Passport and restore authentication state, if any, from the
-// session.
-app.use(passport.initialize());
-app.use(passport.session());
 
 app.use('/', routes);
 

@@ -109,4 +109,4 @@ function listEvents(auth) {
   );
 }
 
-module.exports = fetchCalenderDetails;
+module.exports = { fetchCalenderDetails };

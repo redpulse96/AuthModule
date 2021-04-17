@@ -1,22 +1,36 @@
 const { Router } = require('express');
 const passport = require('passport');
 const router = Router();
+const storedCookiesToRedirectionUrl = {};
 
 router.get(
   '/login/twitter',
+  (req, res, next) => {
+    console.log(req);
+    storedCookiesToRedirectionUrl[req.sessionID] = `http://${req.headers.host}/`;
+    next();
+  },
   passport.authenticate('twitter', {
     session: true,
     authInfo: true,
     passReqToCallback: true,
+    successReturnToOrRedirect: 'http://localhost:8080/oauth/callback',
+    successRedirect: 'http://localhost:8080/oauth/callback',
   }),
 );
 
 router.get('/oauth/callback', (req, res) => {
+  let redirectUrl;
+  for (const key in storedCookiesToRedirectionUrl) {
+    if (req.sessionStore.sessions[key]) {
+      redirectUrl = storedCookiesToRedirectionUrl[key];
+    }
+  }
   passport.authenticate('twitter', {
-    failureRedirect: process.env.REDIRECT_URL,
-    successRedirect: process.env.REDIRECT_URL,
+    failureRedirect: redirectUrl,
+    successRedirect: redirectUrl,
   });
-  res.redirect(process.env.REDIRECT_URL);
+  res.redirect(redirectUrl);
 });
 
 module.exports = router;
