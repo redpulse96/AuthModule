@@ -1,8 +1,17 @@
 const { Router } = require('express');
 const passport = require('passport');
 const router = Router();
+const storedCookiesToRedirectionUrl = {};
 
-router.get('/auth/facebook', passport.authenticate('facebook'));
+router.get(
+  '/auth/facebook',
+  (req, res, next) => {
+    storedCookiesToRedirectionUrl[req.sessionID] =
+      req.headers.rel || req.rel || `http://${req.headers.host}/`;
+    next();
+  },
+  passport.authenticate('facebook'),
+);
 
 router.get(
   '/return',
@@ -12,7 +21,13 @@ router.get(
   }),
   function (req, res) {
     console.log('came here now');
-    res.redirect('/');
+    let redirectUrl = '';
+    for (const key in storedCookiesToRedirectionUrl) {
+      if (req.sessionStore && req.sessionStore.sessions && req.sessionStore.sessions[key]) {
+        redirectUrl = storedCookiesToRedirectionUrl[key];
+      }
+    }
+    res.redirect(redirectUrl);
   },
 );
 

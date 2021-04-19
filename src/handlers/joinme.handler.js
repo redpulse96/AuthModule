@@ -1,4 +1,8 @@
+let storedCookiesToRedirectionUrl = {};
+
 async function joinMeHandler(req, res) {
+  storedCookiesToRedirectionUrl[req.sessionID] =
+    req.headers.rel || req.rel || `http://${req.headers.host}/`;
   const client_id = process.env.JOIN_ME_CLIENT_ID;
   const scope = 'scheduler%20start_meeting';
   const redirect_uri = process.env.JOIN_ME_CURRENT_URL;
@@ -13,7 +17,12 @@ async function callbackFn(req, res) {
   const {
     query: { code, state },
   } = req;
-  const redirectUrl = `${process.env.REDIRECT_URL}?code=${code}$state=${state}`;
+  let redirectUrl = `${process.env.REDIRECT_URL}?code=${code}$state=${state}`;
+  for (const key in storedCookiesToRedirectionUrl) {
+    if (req.sessionStore && req.sessionStore.sessions && req.sessionStore.sessions[key]) {
+      redirectUrl = storedCookiesToRedirectionUrl[key];
+    }
+  }
   res.redirect(redirectUrl);
 }
 
