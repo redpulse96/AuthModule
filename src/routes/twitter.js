@@ -6,8 +6,8 @@ const storedCookiesToRedirectionUrl = {};
 router.get(
   '/login/twitter',
   (req, res, next) => {
-    console.log(req);
-    storedCookiesToRedirectionUrl[req.sessionID] = `http://${req.headers.host}/`;
+    storedCookiesToRedirectionUrl[req.sessionID] =
+      req.headers.rel || req.rel || `http://${req.headers.host}/`;
     next();
   },
   passport.authenticate('twitter', {
