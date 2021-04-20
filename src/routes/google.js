@@ -25,6 +25,17 @@ router.get('/auth/google/callback', passport.authenticate('google'), function (r
   res.redirect(redirectUrl);
 });
 
+router.get('/auth/google-calendar/callback', function (req, res) {
+  // Successful authentication, redirect home.
+  let redirectUrl = '';
+  for (const key in storedCookiesToRedirectionUrl) {
+    if (req.sessionStore && req.sessionStore.sessions && req.sessionStore.sessions[key]) {
+      redirectUrl = storedCookiesToRedirectionUrl[key];
+    }
+  }
+  res.redirect(redirectUrl);
+});
+
 router.get('/google/calender/fetch', fetchCalenderDetails);
 
 module.exports = router;
