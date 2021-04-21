@@ -2,7 +2,7 @@ let storedCookiesToRedirectionUrl = {};
 
 async function joinMeHandler(req, res) {
   storedCookiesToRedirectionUrl[req.sessionID] =
-    req.headers.rel || req.rel || `http://${req.headers.host}/`;
+    req.query.rel || req.headers.rel || req.rel || `http://${req.headers.host}/`;
   const client_id = process.env.JOIN_ME_CLIENT_ID;
   const scope = 'scheduler%20start_meeting';
   const redirect_uri = process.env.JOIN_ME_CURRENT_URL;
