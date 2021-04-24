@@ -10,27 +10,20 @@ router.get(
       req.query.rel || req.headers.rel || req.rel || `http://${req.headers.host}/`;
     next();
   },
-  passport.authenticate('twitter', {
-    session: true,
-    authInfo: true,
-    passReqToCallback: true,
-    successReturnToOrRedirect: 'http://localhost:8080/oauth/callback',
-    successRedirect: 'http://localhost:8080/oauth/callback',
-  }),
+  passport.authenticate('twitter'),
 );
 
-router.get('/oauth/callback', (req, res) => {
-  let redirectUrl;
+router.get('/oauth/callback', passport.authenticate('twitter'), (req, res) => {
+  console.log('came here now');
+  let redirectUrl = '';
   for (const key in storedCookiesToRedirectionUrl) {
     if (req.sessionStore && req.sessionStore.sessions && req.sessionStore.sessions[key]) {
       redirectUrl = storedCookiesToRedirectionUrl[key];
     }
   }
-  passport.authenticate('twitter', {
-    failureRedirect: redirectUrl,
-    successRedirect: redirectUrl,
-  });
-  res.redirect(redirectUrl);
+  const buff = new Buffer(JSON.stringify(req.profile));
+  redirectUrl += `?response=${buff.toString('base64')}`;
+  return res.redirect(redirectUrl);
 });
 
 module.exports = router;

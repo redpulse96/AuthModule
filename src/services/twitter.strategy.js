@@ -37,7 +37,7 @@ module.exports = (passport) => {
         includeEntities: true,
         includeEmail: true,
       },
-      (token, tokenSecret, profile, cb) => {
+      (req, token, tokenSecret, profile, cb) => {
         console.log('asdasdas');
         console.log(profile);
         // In this example, the user's Twitter profile is supplied as the user
@@ -45,6 +45,7 @@ module.exports = (passport) => {
         // be associated with a user record in the application's database, which
         // allows for account linking and authentication with other identity
         // providers.
+        req.profile = profile;
         return cb(null, profile);
       },
     ),

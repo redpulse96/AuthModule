@@ -13,25 +13,20 @@ router.get(
   passport.authenticate('facebook'),
 );
 
-router.get(
-  '/return',
-  passport.authenticate('facebook', {
-    failureRedirect: process.env.REDIRECT_URL,
-    successRedirect: process.env.REDIRECT_URL,
-  }),
-  function (req, res) {
-    console.log('came here now');
-    let redirectUrl = '';
-    for (const key in storedCookiesToRedirectionUrl) {
-      if (req.sessionStore && req.sessionStore.sessions && req.sessionStore.sessions[key]) {
-        redirectUrl = storedCookiesToRedirectionUrl[key];
-      }
+router.get('/return', passport.authenticate('facebook'), (req, res) => {
+  console.log('came here now');
+  let redirectUrl = '';
+  for (const key in storedCookiesToRedirectionUrl) {
+    if (req.sessionStore && req.sessionStore.sessions && req.sessionStore.sessions[key]) {
+      redirectUrl = storedCookiesToRedirectionUrl[key];
     }
-    res.redirect(redirectUrl);
-  },
-);
+  }
+  const buff = new Buffer(JSON.stringify(req.profile));
+  redirectUrl += `?response=${buff.toString('base64')}`;
+  return res.redirect(redirectUrl);
+});
 
-router.get('/profile', require('connect-ensure-login').ensureLoggedIn(), function (req, res) {
+router.get('/profile', require('connect-ensure-login').ensureLoggedIn(), (req, res) => {
   res.render('profile', { user: req.user });
 });
 

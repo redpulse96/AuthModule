@@ -8,8 +8,9 @@ module.exports = (passport) => {
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
         callbackURL: 'http://localhost:8080/auth/google/callback',
       },
-      function (accessToken, refreshToken, profile, cb) {
-        return cb(err, user);
+      (accessToken, refreshToken, profile, cb) => {
+        req.profile = profile;
+        return cb(null, profile);
       },
     ),
   );

@@ -2,7 +2,7 @@ const { Router } = require('express');
 const passport = require('passport');
 const { fetchCalenderDetails } = require('../handlers');
 const router = Router();
-let storedCookiesToRedirectionUrl = {};
+const storedCookiesToRedirectionUrl = {};
 
 router.get(
   '/auth/google',
@@ -11,10 +11,10 @@ router.get(
       req.query.rel || req.headers.rel || req.params.rel || `http://${req.headers.host}/`;
     next();
   },
-  passport.authenticate('google', { scope: ['profile'] }),
+  passport.authenticate('google'),
 );
 
-router.get('/auth/google/callback', passport.authenticate('google'), function (req, res) {
+router.get('/auth/google/callback', passport.authenticate('google'), (req, res) => {
   // Successful authentication, redirect home.
   let redirectUrl = '';
   for (const key in storedCookiesToRedirectionUrl) {
@@ -22,10 +22,12 @@ router.get('/auth/google/callback', passport.authenticate('google'), function (r
       redirectUrl = storedCookiesToRedirectionUrl[key];
     }
   }
-  res.redirect(redirectUrl);
+  const buff = new Buffer(JSON.stringify(req.profile));
+  redirectUrl += `?response=${buff.toString('base64')}`;
+  return res.redirect(redirectUrl);
 });
 
-router.get('/auth/google-calendar/callback', function (req, res) {
+router.get('/auth/google-calendar/callback', (req, res) => {
   // Successful authentication, redirect home.
   let redirectUrl = '';
   for (const key in storedCookiesToRedirectionUrl) {
