@@ -21,7 +21,7 @@ router.get('/oauth/callback', passport.authenticate('twitter'), (req, res) => {
       redirectUrl = storedCookiesToRedirectionUrl[key];
     }
   }
-  const buff = new Buffer(JSON.stringify(req.profile));
+  const buff = new Buffer.from(JSON.stringify(req.profile));
   redirectUrl += `?response=${buff.toString('base64')}`;
   return res.redirect(redirectUrl);
 });
